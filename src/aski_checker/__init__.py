@@ -1,0 +1,2 @@
+"""ASKİ outage checker service."""
+

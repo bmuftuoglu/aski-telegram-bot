@@ -1,0 +1,31 @@
+services:
+  aski-checker:
+    build: .
+    command: uvicorn aski_checker.app:app --host 0.0.0.0 --port 8000
+    env_file:
+      - .env
+    environment:
+      DATA_DIR: /app/data
+      BOT_NOTIFY_URL: http://telegram-bot:8080/notify
+    volumes:
+      - aski-data:/app/data
+    expose:
+      - "8000"
+
+  telegram-bot:
+    build: .
+    command: python -m telegram_bot.app
+    env_file:
+      - .env
+    environment:
+      CHECKER_BASE_URL: http://aski-checker:8000
+      BOT_NOTIFY_HOST: 0.0.0.0
+      BOT_NOTIFY_PORT: "8080"
+    depends_on:
+      - aski-checker
+    expose:
+      - "8080"
+
+volumes:
+  aski-data:
+
