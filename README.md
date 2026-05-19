@@ -57,10 +57,10 @@ Tüm endpoint'ler `Authorization: Bearer $INTERNAL_API_TOKEN` header'ı gerektir
   "lastCheckedAt": "2026-05-19T12:00:00+00:00",
   "lastError": null,
   "lastMatch": {
-    "district": "ÇANKAYA",
+    "district": "İLÇE_ADI",
     "faultDate": "19.05.2026 09:20:00",
     "repairDate": "19.05.2026 18:00:00",
-    "affectedPlaces": "İşçi Blokları mahallesi"
+    "affectedPlaces": "Mahalle Adı"
   }
 }
 ```
