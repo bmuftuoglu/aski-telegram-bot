@@ -6,7 +6,7 @@ ASKİ (Ankara Su ve Kanalizasyon İdaresi) su kesintisi sayfasını periyodik ol
 
 ```
 ASKİ sitesi
-    ↓ (her 10 dk)
+    ↓ (her 1 saat, varsayılan)
 aski-water-watch  ──POST /notify──▶  telegram-home-server  ──▶  Telegram
 ```
 
