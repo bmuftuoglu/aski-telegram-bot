@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(dirname "$0")/.."
+cd "$(git rev-parse --show-toplevel)"
 
 if git ls-files --error-unmatch .env >/dev/null 2>&1; then
   echo "Refusing to continue: .env is tracked by git."
