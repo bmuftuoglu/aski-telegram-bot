@@ -13,16 +13,24 @@ Telegram bot token'ı yalnızca `telegram-bot` container'ında kullanılır. Git
 
 ## Kurulum
 
-`.env` dosyasını örnek dosyadan oluşturun:
+### 1. Telegram botu oluştur
+
+1. Telegram'da **@BotFather**'ı aç
+2. `/newbot` komutunu gönder
+3. Bot için bir isim ve kullanıcı adı belirle (kullanıcı adı `bot` ile bitmeli, örn. `aski_bildirim_bot`)
+4. BotFather sana bir token verecek: `123456789:ABCdef...`
+5. Bu token'ı bir yere not et, bir sonraki adımda kullanacaksın
+
+### 2. Yapılandırma dosyasını oluştur
 
 ```bash
 cp .env.example .env
 ```
 
-`.env` dosyasını açıp aşağıdaki değerleri doldurun:
+`.env` dosyasını açıp değerleri doldur:
 
 ```env
-TELEGRAM_BOT_TOKEN=123456789:your_real_token
+TELEGRAM_BOT_TOKEN=123456789:BotFather_dan_aldigin_token
 TARGET_DISTRICT=ÇANKAYA
 TARGET_NEIGHBORHOOD=Mahalle Adı
 ```
@@ -45,11 +53,13 @@ TARGET_NEIGHBORHOOD=Mahalle Adı
 docker compose up --build
 ```
 
-Telegram'da:
+Containerlar ayağa kalktıktan sonra Telegram'da oluşturduğun botu aç ve:
 
-- `/start` — Bildirimlere abone ol
+- `/start` — Bildirimlere abone ol (mevcut durumu da gösterir)
 - `/durum` — Son kontrol sonucunu göster
 - `/stop` — Aboneliği kapat
+
+Abone olduktan sonra bot, ilçe/mahalle için aktif kesinti başladığında veya sona erdiğinde otomatik mesaj gönderir. Kontrol aralığı varsayılan olarak 10 dakikadır (`CHECK_INTERVAL_SECONDS`).
 
 Checker API'si Docker ağının dışına açılmaz; yalnızca container'lar arası kullanılır.
 
