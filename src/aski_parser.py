@@ -48,24 +48,39 @@ def parse_outages(html: str) -> list[Outage]:
 
     outages: list[Outage] = []
     current: dict[str, str] | None = None
+    pending_key: str | None = None
 
     for line in lines:
         if _is_district(line):
             _flush(outages, current)
             current = {"district": line}
+            pending_key = None
             continue
 
         if current is None:
+            pending_key = None
             continue
 
+        label_key: str | None = None
         if line.startswith("Arıza Tarihi:"):
-            current["fault_date"] = _value(line)
+            label_key = "fault_date"
         elif line.startswith("Tamir Tarihi:"):
-            current["repair_date"] = _value(line)
+            label_key = "repair_date"
         elif line.startswith("Detay:"):
-            current["detail"] = _value(line)
+            label_key = "detail"
         elif line.startswith("Etkilenen Yerler:"):
-            current["affected_places"] = _value(line)
+            label_key = "affected_places"
+
+        if label_key is not None:
+            value = _value(line)
+            if value:
+                current[label_key] = value
+                pending_key = None
+            else:
+                pending_key = label_key
+        elif pending_key is not None:
+            current[pending_key] = line
+            pending_key = None
 
     _flush(outages, current)
     return outages
