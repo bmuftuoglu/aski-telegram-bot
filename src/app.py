@@ -47,7 +47,7 @@ class Settings:
             aski_url=os.getenv("ASKI_URL", "https://www.aski.gov.tr/tr/Kesinti.aspx"),
             target_district=district,
             target_neighborhood=neighborhood,
-            check_interval_seconds=int(os.getenv("CHECK_INTERVAL_SECONDS", "600")),
+            check_interval_seconds=int(os.getenv("CHECK_INTERVAL_SECONDS", "3600")),
             notify_every_check=os.getenv("ASKI_NOTIFY_EVERY_CHECK", "false").lower() == "true",
             gateway_notify_url=os.getenv(
                 "GATEWAY_NOTIFY_URL", "http://telegram-bot-gateway:8080/notify"
