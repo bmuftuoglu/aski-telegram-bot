@@ -2,63 +2,60 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from aski_checker.app import CheckerService, Settings, StateStore, create_app
+from app import Settings, StateStore, WatcherService, create_app
 
 
-def test_status_endpoint_returns_cached_status(tmp_path: Path) -> None:
+AUTH = {"authorization": "Bearer test-token-123"}
+
+
+def _make_client(tmp_path: Path) -> TestClient:
     settings = Settings(
         aski_url="https://example.test/kesinti",
         target_district="ÇANKAYA",
-        target_neighborhood="İşçi Blokları",
+        target_neighborhood="Test Mahallesi",
         check_interval_seconds=600,
+        notify_every_check=False,
+        gateway_notify_url="http://localhost:8080/notify",
+        internal_api_token="test-token-123",
         data_dir=tmp_path,
-        bot_notify_url="http://telegram-bot:8080/notify",
     )
     store = StateStore(tmp_path / "state.json")
-    store.save(
-        {
-            "subscribers": [],
-            "last_status": {
-                "active": False,
-                "checked_at": "2026-05-19T12:00:00+00:00",
-                "source_url": settings.aski_url,
-                "target": {
-                    "district": settings.target_district,
-                    "neighborhood": settings.target_neighborhood,
-                },
-                "outages": [],
-                "error": None,
-            },
-            "last_signature": "cached",
-            "last_error": None,
-        }
-    )
+    return TestClient(create_app(WatcherService(settings, store), start_background=False))
 
-    client = TestClient(create_app(CheckerService(settings, store), start_background=False))
-    response = client.get("/status")
 
+def test_health(tmp_path: Path) -> None:
+    response = _make_client(tmp_path).get("/health")
     assert response.status_code == 200
-    assert response.json()["active"] is False
-    assert response.json()["target"]["district"] == "ÇANKAYA"
 
 
-def test_subscribe_and_unsubscribe(tmp_path: Path) -> None:
+def test_status_requires_auth(tmp_path: Path) -> None:
+    assert _make_client(tmp_path).get("/status").status_code == 401
+
+
+def test_check_requires_auth(tmp_path: Path) -> None:
+    assert _make_client(tmp_path).post("/check").status_code == 401
+
+
+def test_status_returns_last_match(tmp_path: Path) -> None:
     settings = Settings(
         aski_url="https://example.test/kesinti",
         target_district="ÇANKAYA",
-        target_neighborhood="İşçi Blokları",
+        target_neighborhood="Test Mahallesi",
         check_interval_seconds=600,
+        notify_every_check=False,
+        gateway_notify_url="http://localhost:8080/notify",
+        internal_api_token="test-token-123",
         data_dir=tmp_path,
-        bot_notify_url="http://telegram-bot:8080/notify",
     )
     store = StateStore(tmp_path / "state.json")
-    client = TestClient(create_app(CheckerService(settings, store), start_background=False))
-
-    subscribe_response = client.post("/subscribe", json={"chat_id": 12345})
-    unsubscribe_response = client.post("/unsubscribe", json={"chat_id": 12345})
-
-    assert subscribe_response.status_code == 200
-    assert subscribe_response.json()["subscriber_count"] == 1
-    assert unsubscribe_response.status_code == 200
-    assert unsubscribe_response.json()["subscriber_count"] == 0
-
+    store.save({
+        "lastNotifiedHash": "",
+        "lastCheckedAt": "2026-05-19T12:00:00+00:00",
+        "lastError": None,
+        "lastMatch": None,
+    })
+    client = TestClient(create_app(WatcherService(settings, store), start_background=False))
+    response = client.get("/status", headers=AUTH)
+    assert response.status_code == 200
+    assert response.json()["lastMatch"] is None
+    assert response.json()["lastCheckedAt"] == "2026-05-19T12:00:00+00:00"
