@@ -1,8 +1,14 @@
 # aski-water-watch
 
-ASKİ (Ankara Su ve Kanalizasyon İdaresi) su kesintisi sayfasını periyodik olarak kontrol eden, yapılandırılmış ilçe ve mahalle için kesinti başladığında veya sona erdiğinde bir gateway'e bildirim gönderen servis.
+ASKİ (Ankara Su ve Kanalizasyon İdaresi) su kesintisi sayfasını periyodik olarak kontrol eden HTTP servisi. Belirlenen ilçe ve mahalle için kesinti başladığında veya sona erdiğinde bir gateway'e bildirim gönderir.
 
 Bu servis bağımsız çalışmaz; bildirimlerini iletmek için bir gateway'e ihtiyaç duyar. [telegram-home-server](https://github.com/bmuftuoglu/telegram-home-server) ile birlikte kullanılmak üzere tasarlanmıştır.
+
+```
+ASKİ sitesi
+    ↓ (her 10 dk)
+aski-water-watch  ──POST /notify──▶  telegram-home-server  ──▶  Telegram
+```
 
 ## Nasıl Çalışır?
 
@@ -20,6 +26,21 @@ Tüm endpoint'ler `Authorization: Bearer $INTERNAL_API_TOKEN` header'ı gerektir
 | `GET /health` | Servis sağlık kontrolü |
 | `GET /status` | Son kontrol durumunu döner |
 | `POST /check` | Manuel kontrol başlatır |
+
+`GET /status` örnek yanıt:
+
+```json
+{
+  "lastCheckedAt": "2026-05-19T12:00:00+00:00",
+  "lastError": null,
+  "lastMatch": {
+    "district": "ÇANKAYA",
+    "faultDate": "19.05.2026 09:20:00",
+    "repairDate": "19.05.2026 18:00:00",
+    "affectedPlaces": "İşçi Blokları mahallesi"
+  }
+}
+```
 
 ## Ortam Değişkenleri
 
