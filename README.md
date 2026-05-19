@@ -6,7 +6,7 @@ Designed to work with [telegram-home-server](https://github.com/bmuftuoglu/teleg
 
 ```
 ASKİ website
-    ↓ (every 1 hour, default)
+    ↓ (every 5 min, default)
 aski-water-watch  ──POST /notify──▶  telegram-home-server  ──▶  Telegram
 ```
 
@@ -83,7 +83,7 @@ All endpoints require `Authorization: Bearer $INTERNAL_API_TOKEN` (except `/heal
 | `ASKI_TARGET_NEIGHBORHOOD` | required | Neighborhood name to monitor. |
 | `GATEWAY_NOTIFY_URL` | `http://telegram-bot-gateway:8080/notify` | URL to send notifications to. |
 | `ASKI_URL` | ASKİ outage page | No need to change. |
-| `CHECK_INTERVAL_SECONDS` | `3600` | Check interval in seconds. |
+| `CHECK_INTERVAL_SECONDS` | `300` | Check interval in seconds. |
 | `ASKI_NOTIFY_EVERY_CHECK` | `false` | If `true`, sends a notification on every check. |
 
 ## Tests
