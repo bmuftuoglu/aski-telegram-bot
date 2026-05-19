@@ -2,7 +2,7 @@
 
 ASKİ (Ankara Su ve Kanalizasyon İdaresi) su kesintisi sayfasını periyodik olarak kontrol eden HTTP servisi. Belirlenen ilçe ve mahalle için kesinti başladığında veya sona erdiğinde bir gateway'e bildirim gönderir.
 
-Bu servis bağımsız çalışmaz; bildirimlerini iletmek için bir gateway'e ihtiyaç duyar. [telegram-home-server](https://github.com/bmuftuoglu/telegram-home-server) ile birlikte kullanılmak üzere tasarlanmıştır.
+[telegram-home-server](https://github.com/bmuftuoglu/telegram-home-server) ile birlikte kullanılmak üzere tasarlanmıştır.
 
 ```
 ASKİ sitesi
@@ -10,12 +10,35 @@ ASKİ sitesi
 aski-water-watch  ──POST /notify──▶  telegram-home-server  ──▶  Telegram
 ```
 
-## Nasıl Çalışır?
+## Gereksinimler
 
-- ASKİ kesinti sayfasını yapılandırılan aralıkta çeker
-- Belirlenen ilçe ve mahalle için eşleşme arar
-- Durum değiştiğinde (kesinti başladı / sona erdi) gateway'in `/notify` endpoint'ine POST atar
-- `GET /status` ve `POST /check` endpoint'lerini sunar
+- [Docker](https://docs.docker.com/get-docker/) ve [Docker Compose](https://docs.docker.com/compose/install/)
+- Çalışan bir [telegram-home-server](https://github.com/bmuftuoglu/telegram-home-server)
+- `homebot` adlı Docker network (home server kurulumunda oluşturulur)
+
+## Kurulum
+
+### 1. Yapılandırma dosyasını oluştur
+
+```bash
+cp .env.example .env
+```
+
+`.env` dosyasını açıp şu değerleri doldur:
+
+```env
+INTERNAL_API_TOKEN=home_server_ile_ayni_token
+ASKI_TARGET_DISTRICT=ÇANKAYA
+ASKI_TARGET_NEIGHBORHOOD=Mahalle Adı
+```
+
+`INTERNAL_API_TOKEN`, `telegram-home-server`'daki `.env`'deki değerle aynı olmalıdır.
+
+### 2. Başlat
+
+```bash
+docker compose up --build -d
+```
 
 ## API
 
