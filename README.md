@@ -40,6 +40,15 @@ ASKI_TARGET_NEIGHBORHOOD=Mahalle Adı
 docker compose up --build -d
 ```
 
+## Telegram Komutları
+
+Bu servis kurulduğunda `telegram-home-server`'a aşağıdaki komutlar otomatik olarak eklenir:
+
+| Komut | Açıklama |
+| --- | --- |
+| `/aski_durum` | Son kontrol durumunu göster |
+| `/aski_kontrol` | Manuel kontrol başlat |
+
 ## API
 
 Tüm endpoint'ler `Authorization: Bearer $INTERNAL_API_TOKEN` header'ı gerektirir (`/health` hariç).
